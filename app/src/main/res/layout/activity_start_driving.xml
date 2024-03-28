@@ -42,6 +42,7 @@
                 android:background="@drawable/red_button"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
+                android:padding="12dp"
                 app:layout_constraintTop_toBottomOf="@+id/readyText"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
