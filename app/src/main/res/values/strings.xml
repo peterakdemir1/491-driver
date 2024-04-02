@@ -1,3 +1,15 @@
 <resources>
-    <string name="app_name">491_driver</string>
+    <string name="app_name">Rapid Rentals: Driver</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="location">Location</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="payment_method">Payment Method</string>
+    <string name="register">Register</string>
+    <string name="location_1_place">Location 1: Place</string>
+    <string name="location_two_place">Location Two: Place</string>
+    <string name="location_2_place">Location 2: Place</string>
 </resources>
