@@ -40,6 +40,7 @@ class LoginActivity : AppCompatActivity() {
             editor.putInt("user id", 1)
             editor.apply()
             startActivity(Intent(this, MainActivity::class.java))
+            finish()
             // FOR WHEN API IS IMPLEMENTED
 //            GlobalScope.launch(Dispatchers.Main){
 //                checkAccount(username, password)

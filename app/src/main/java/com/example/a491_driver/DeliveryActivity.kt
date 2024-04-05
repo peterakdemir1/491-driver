@@ -1,6 +1,8 @@
 package com.example.a491_driver
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
@@ -15,6 +17,7 @@ class DeliveryActivity: AppCompatActivity() {
     private lateinit var itemImage: ImageView
     private lateinit var itemTitle: TextView
     private lateinit var itemLocationTwo: TextView
+    lateinit var sharedpreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,10 +51,15 @@ class DeliveryActivity: AppCompatActivity() {
             startActivity(intent)
         }
 
-        val confirmPickUpBtn = findViewById<Button>(R.id.confirmDeliveryButton)
-        confirmPickUpBtn.setOnClickListener {
+        val confirmDeliveryBtn = findViewById<Button>(R.id.confirmDeliveryButton)
+        confirmDeliveryBtn.setOnClickListener {
 
             // Insert API stuff to confirm delivery
+
+            sharedpreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
+            val editor = sharedpreferences.edit()
+            editor.remove("delivering")
+            editor.apply()
 
             val intent = Intent(this, WaitingActivity::class.java)
             startActivity(intent)
@@ -59,5 +67,9 @@ class DeliveryActivity: AppCompatActivity() {
         }
 
 
+    }
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finishAffinity() // Finish all activities in the task associated with this activity
     }
 }

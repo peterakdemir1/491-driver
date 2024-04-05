@@ -23,12 +23,14 @@ class WaitingActivity : AppCompatActivity() {
             editor.clear()
             editor.apply()
             startActivity(Intent(this, LoginActivity::class.java))
+            finish()
         }
 
         // remove once api trigger when a delivery is ready is implemented
         val testBtn = findViewById<Button>(R.id.testButton)
         testBtn.setOnClickListener {
             startActivity(Intent(this, TakeDeliveryActivity::class.java))
+            finish()
         }
     }
 }

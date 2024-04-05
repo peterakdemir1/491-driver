@@ -1,6 +1,8 @@
 package com.example.a491_driver
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
@@ -15,6 +17,7 @@ class PickUpActivity: AppCompatActivity() {
     private lateinit var itemImage: ImageView
     private lateinit var itemTitle: TextView
     private lateinit var itemLocationOne: TextView
+    lateinit var sharedpreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,12 +56,21 @@ class PickUpActivity: AppCompatActivity() {
 
             // Insert API stuff to confirm pickup
 
+            sharedpreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
+            val editor = sharedpreferences.edit()
+            editor.remove("picking up")
+            editor.putString("delivering", "item")
+            editor.apply()
+
             val intent = Intent(this, DeliveryActivity::class.java)
 //            intent.putExtra(ITEM_EXTRA2, item)
             startActivity(intent)
             finish()
         }
+    }
 
-
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finishAffinity() // Finish all activities in the task associated with this activity
     }
 }

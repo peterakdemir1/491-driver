@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.webkit.WebView
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.Toast
 
 const val SHARED_PREFS = "SHARED_PREFS"
 class MainActivity : AppCompatActivity() {
@@ -29,14 +30,22 @@ class MainActivity : AppCompatActivity() {
         sharedpreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
         val username = sharedpreferences.getString("username", null)
         val userId = sharedpreferences.getInt("user id", -1)
+        val pickUp = sharedpreferences.getString("picking up", null)
+        val delivering = sharedpreferences.getString("delivering", null)
+
         if (username == null) {
             startActivity(Intent(this, LoginActivity::class.java))
+        } else if (pickUp != null) {
+            startActivity(Intent(this, PickUpActivity::class.java))
+        } else if (delivering != null) {
+            startActivity(Intent(this, DeliveryActivity::class.java))
         }
 
         val startDrivingBtn = findViewById<Button>(R.id.deliverButton)
         startDrivingBtn.setOnClickListener {
             val intent = Intent(this, WaitingActivity::class.java)
             startActivity(intent)
+            finish()
         }
 
         val logoutBtn = findViewById<ImageButton>(R.id.logoutButton)
@@ -46,6 +55,7 @@ class MainActivity : AppCompatActivity() {
             editor.clear()
             editor.apply()
             startActivity(Intent(this, LoginActivity::class.java))
+            finish()
         }
     }
 }

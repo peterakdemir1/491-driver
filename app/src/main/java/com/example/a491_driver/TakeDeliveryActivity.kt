@@ -1,5 +1,6 @@
 package com.example.a491_driver
 
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -18,6 +19,7 @@ class TakeDeliveryActivity : AppCompatActivity() {
     private lateinit var itemLocationOne: TextView
     private lateinit var itemLocationTwo: TextView
     private lateinit var itemPayout: TextView
+    lateinit var sharedpreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +56,10 @@ class TakeDeliveryActivity : AppCompatActivity() {
 
             // Insert API Stuff to say item is accepted
 
+            sharedpreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
+            val editor = sharedpreferences.edit()
+            editor.putString("picking up", "item")
+            editor.apply()
             val intent = Intent(this, PickUpActivity::class.java)
 //            intent.putExtra(ITEM_EXTRA, item)
             startActivity(intent)
