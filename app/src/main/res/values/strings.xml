@@ -12,4 +12,5 @@
     <string name="location_1_place">Location 1: Place</string>
     <string name="location_two_place">Location Two: Place</string>
     <string name="location_2_place">Location 2: Place</string>
+    <string name="license_id">License ID</string>
 </resources>
