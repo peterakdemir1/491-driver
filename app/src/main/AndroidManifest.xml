@@ -15,6 +15,24 @@
         android:theme="@style/rapidRentalsTheme"
         tools:targetApi="31">
         <activity
+            android:name=".LoginActivity"
+            android:exported="true"/>
+        <activity
+            android:name=".RegisterActivity"
+            android:exported="true"/>
+        <activity
+            android:name=".DeliveryActivity"
+            android:exported="true"/>
+        <activity
+            android:name=".PickUpActivity"
+            android:exported="true"/>
+        <activity
+            android:name=".TakeDeliveryActivity"
+            android:exported="true"/>
+        <activity
+            android:name=".WaitingActivity"
+            android:exported="true"/>
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
