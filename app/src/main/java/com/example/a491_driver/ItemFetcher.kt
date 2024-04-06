@@ -57,7 +57,7 @@ class ItemFetcher() {
         }
     }
 
-    suspend fun removeDelivery(key: String) {
+    fun removeDelivery(key: String) {
         val databaseReference = FirebaseDatabase.getInstance().getReference("messages")
         val itemReference = databaseReference.child(key)
         itemReference.removeValue().addOnCompleteListener { task ->
