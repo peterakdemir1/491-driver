@@ -27,8 +27,8 @@ class ItemFetcher(passedItems: MutableList<Delivery>, passedAdapter: ItemAdapter
                     val itemName = newItem.child("item_name").getValue(String::class.java)
                     val sourceAddress = newItem.child("source_address").getValue(String::class.java)
                     val tipAmount = newItem.child("tip_amount").getValue(String::class.java)
-                    val rentalID = newItem.child("rental_id").getValue(String::class.java)
-                    val returnID = newItem.child("return_id").getValue(String::class.java)
+                    val rentalID = newItem.child("rental_id").getValue(Int::class.java).toString()
+                    val returnID = newItem.child("return_id").getValue(Int::class.java).toString()
 
                     Log.i("New RT Firebase Item Key", key)
                     Log.i(
