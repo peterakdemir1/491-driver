@@ -4,18 +4,25 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
+import android.widget.GridLayout
 import android.widget.ImageButton
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class WaitingActivity : AppCompatActivity() {
     lateinit var sharedpreferences: SharedPreferences
-
+    val deliveries = mutableListOf<Delivery>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_waiting)
 
         sharedpreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
+
+        val waitingText = findViewById<TextView>(R.id.waitingText)
         val logoutBtn = findViewById<ImageButton>(R.id.logoutButton)
         logoutBtn.setOnClickListener {
             // remove username from shared preferences, send to login screen
@@ -26,11 +33,26 @@ class WaitingActivity : AppCompatActivity() {
             finish()
         }
 
-        // remove once api trigger when a delivery is ready is implemented
-        val testBtn = findViewById<Button>(R.id.testButton)
-        testBtn.setOnClickListener {
-            startActivity(Intent(this, TakeDeliveryActivity::class.java))
-            finish()
+        // init recycler view, set up fetcher
+        val recycler = findViewById<RecyclerView>(R.id.recycleView)
+        recycler.layoutManager = GridLayoutManager(this, 1)
+        val itemAdapter = ItemAdapter(deliveries, this)
+        recycler.adapter = itemAdapter
+
+        val fetcher = ItemFetcher(deliveries, itemAdapter)
+        fetcher.getCurrentDeliveries()
+
+        if (deliveries.size > 0){
+            waitingText.visibility = TextView.INVISIBLE
+            recycler.visibility = RecyclerView.VISIBLE
+            Log.i("RV List", deliveries.toString())
         }
+
+        // remove once api trigger when a delivery is ready is implemented
+//        val testBtn = findViewById<Button>(R.id.testButton)
+//        testBtn.setOnClickListener {
+//            startActivity(Intent(this, TakeDeliveryActivity::class.java))
+//            finish()
+//        }
     }
 }
