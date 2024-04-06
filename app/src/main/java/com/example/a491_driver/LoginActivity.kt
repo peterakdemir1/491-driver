@@ -33,22 +33,12 @@ class LoginActivity : AppCompatActivity() {
             val username = usernameInput.text.toString()
             val password = passwordInput.text.toString()
 
-            sharedpreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
-            val editor = sharedpreferences.edit()
-            editor.clear()
-            editor.putString("username", "test")
-            editor.putInt("user id", 1)
-            editor.apply()
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
-            // FOR WHEN API IS IMPLEMENTED
-//            GlobalScope.launch(Dispatchers.Main){
-//                checkAccount(username, password)
-//            }
+            GlobalScope.launch(Dispatchers.Main){
+                checkAccount(username, password)
+            }
         }
     }
 
-    // FOR WHEN API IS IMPLEMENTED
 
     // Logs in if username/password is valid
     suspend fun checkAccount(username: String, password: String) {

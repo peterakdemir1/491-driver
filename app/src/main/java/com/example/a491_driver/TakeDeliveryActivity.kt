@@ -4,15 +4,20 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
-const val ITEM_EXTRA = "ITEM_EXTRA"
+const val DELIVERY_EXTRA = "DELIVERY_EXTRA"
 class TakeDeliveryActivity : AppCompatActivity() {
     private lateinit var itemImage: ImageView
     private lateinit var itemTitle: TextView
@@ -31,20 +36,32 @@ class TakeDeliveryActivity : AppCompatActivity() {
         itemLocationTwo = findViewById(R.id.locationTwoText)
         itemPayout = findViewById(R.id.payoutText)
 
-        // For when API is enabled
-//        val item = intent.getSerializableExtra(ITEM_EXTRA) as Item
-//
-//        itemTitle.text = item.itemTitle
-//        val locationOne = "Location 1: " + item.pickupLocation
-//        itemLocationOne.text = locationOne
-//        val locationTwo = "Location 2: " + item.deliverLocation
-//        itemLocationTwo.text = locationTwo
-//        val payout = "Payout: $" + item.tip_amount_for_driver
-//        itemPayout.text = payout
+
+//        val delivery = intent.getSerializableExtra(DELIVERY_EXTRA) as Delivery
+// integrate getting actual delivery info after we merge with peter
+        val delivery = Delivery(
+            25,
+            59,
+            null,
+            "101 Central Ave, Newark",
+            "200 Warren St, Newark",
+            "Big drill",
+            "$100",
+            "google.com"
+        )
+
+
+        itemTitle.text = delivery.delivery_title
+        val locationOne = "Location 1: " + delivery.pickup_location
+        itemLocationOne.text = locationOne
+        val locationTwo = "Location 2: " + delivery.deliver_location
+        itemLocationTwo.text = locationTwo
+        val payout = "Payout: $" + delivery.payment
+        itemPayout.text = payout
 
 
         Glide.with(this)
-//            .load(item.itemImageUrl)
+//            .load(delivery.itemImageUrl)
             .load(ContextCompat.getDrawable(this, R.drawable.drill_test))
             .into(itemImage)
 
@@ -54,27 +71,52 @@ class TakeDeliveryActivity : AppCompatActivity() {
 
         acceptBtn.setOnClickListener {
 
-            // Insert API Stuff to say item is accepted
+            GlobalScope.launch(Dispatchers.Main) {
+                attachDriver(delivery)
+            }
 
-            sharedpreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
-            val editor = sharedpreferences.edit()
-            editor.putString("picking up", "item")
-            editor.apply()
-            val intent = Intent(this, PickUpActivity::class.java)
-//            intent.putExtra(ITEM_EXTRA, item)
-            startActivity(intent)
-            finish()
+
         }
 
         denyBtn.setOnClickListener {
-
-            // Insert API stuff to say item was denied
-
             val intent = Intent(this, WaitingActivity::class.java)
             startActivity(intent)
             finish()
         }
 
+    }
 
+    suspend fun attachDriver(delivery: Delivery){
+        val apiService = RetrofitClient.instance.create(APIService::class.java)
+        sharedpreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
+        try {
+            // attach driver
+            val driver_id = DriverId(sharedpreferences.getInt(getString(R.string.driver_id_key), -1))
+            if (delivery.rental_id != null) {
+                val rental_id = delivery.rental_id
+                apiService.attachDriverToRental(rental_id, driver_id)
+            } else if (delivery.return_id != null) {
+                val return_id = delivery.return_id
+                apiService.attachDriverToReturn(return_id, driver_id)
+            }
+
+            // go to pick up activity
+            val editor = sharedpreferences.edit()
+            editor.putString("picking up", "item")
+            editor.apply()
+            val intent = Intent(this, PickUpActivity::class.java)
+            intent.putExtra(DELIVERY_EXTRA, delivery)
+            startActivity(intent)
+            finish()
+        } catch (e: Exception) {
+            Log.e("TakeDeliveryActivity", "Could not attach driver to delivery")
+            Log.e("TakeDeliveryActivity", "Error:  ${e.message}")
+            Toast.makeText(this, "Couldn't Accept", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, WaitingActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 }
+
+class DriverId(val driver_id: Int)

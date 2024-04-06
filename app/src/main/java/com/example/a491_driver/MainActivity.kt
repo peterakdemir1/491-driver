@@ -28,8 +28,15 @@ class MainActivity : AppCompatActivity() {
 
         // Check if user is logged in, send to login if not
         sharedpreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
+
+        /*val editor = sharedpreferences.edit()
+        editor.remove("username")
+        editor.remove("picking up")
+        editor.remove("delivering")
+        editor.apply()*/
+
         val username = sharedpreferences.getString("username", null)
-        val userId = sharedpreferences.getInt("user id", -1)
+        val userId = sharedpreferences.getInt(getString(R.string.driver_id_key), -1)
         val pickUp = sharedpreferences.getString("picking up", null)
         val delivering = sharedpreferences.getString("delivering", null)
 
