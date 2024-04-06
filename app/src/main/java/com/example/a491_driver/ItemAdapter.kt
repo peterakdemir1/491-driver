@@ -45,7 +45,7 @@ class ItemAdapter(private val deliveries: List<Delivery>, private val context: C
 
         holder.itemView.setOnClickListener {
             val intent = Intent(context, TakeDeliveryActivity::class.java)
-//            intent.putExtra(DELIVERY_EXTRA, delivery)
+            intent.putExtra(DELIVERY_EXTRA, delivery)
             context.startActivity(intent)
         }
     }
