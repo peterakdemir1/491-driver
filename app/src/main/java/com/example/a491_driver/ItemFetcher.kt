@@ -69,7 +69,19 @@ class ItemFetcher() {
                 // Handle failure, e.g., show error message
             }
         }
+    }
 
-
+    fun updateAccepted(key: String) {
+        val databaseReference = FirebaseDatabase.getInstance().getReference("messages")
+        val itemReference = databaseReference.child(key)
+        itemReference.child("accepted").setValue(true).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Log.d("Delete Item", "Item successfully deleted.")
+                // Handle successful deletion, e.g., update UI or notify user
+            } else {
+                Log.d("Delete Item", "Failed to delete item.")
+                // Handle failure, e.g., show error message
+            }
+        }
     }
 }

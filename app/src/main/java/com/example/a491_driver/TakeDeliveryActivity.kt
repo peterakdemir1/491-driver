@@ -55,6 +55,8 @@ class TakeDeliveryActivity : AppCompatActivity() {
         acceptBtn.setOnClickListener {
 
             // Insert API Stuff to say item is accepted
+            // updating the item's "accepted" value to true
+            delivery.key?.let { it1 -> ItemFetcher().updateAccepted(it1) }
 
             sharedpreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
             val editor = sharedpreferences.edit()
