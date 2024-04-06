@@ -8,8 +8,6 @@ import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 class ItemFetcher() {
     fun getCurrentDeliveries(): Flow<List<Delivery>> = callbackFlow {
@@ -21,34 +19,34 @@ class ItemFetcher() {
                     val newList = mutableListOf<Delivery>()
 
                     for (item in list) {
-                        val key = item.key.toString()
-                        val destinationAddress = item.child("destination_address").getValue(String::class.java)
-                        val imageUrl = item.child("image_url").getValue(String::class.java)
-                        val itemName = item.child("item_name").getValue(String::class.java)
-                        val sourceAddress = item.child("source_address").getValue(String::class.java)
-                        val tipAmount = item.child("tip_amount").getValue(String::class.java)
-                        val rentalID = item.child("rental_id").getValue(Int::class.java).toString()
-                        val returnID = item.child("return_id").getValue(Int::class.java).toString()
+                        if (item.child("accepted").getValue(Boolean::class.java) == false) {
+                            val key = item.key.toString()
+                            val destinationAddress = item.child("destination_address").getValue(String::class.java)
+                            val imageUrl = item.child("image_url").getValue(String::class.java)
+                            val itemName = item.child("item_name").getValue(String::class.java)
+                            val sourceAddress = item.child("source_address").getValue(String::class.java)
+                            val tipAmount = item.child("tip_amount").getValue(String::class.java)
+                            val rentalID = item.child("rental_id").getValue(Int::class.java).toString()
+                            val returnID = item.child("return_id").getValue(Int::class.java).toString()
+                            val delivery = Delivery(
+                                key = key,
+                                name = itemName,
+                                source = sourceAddress,
+                                destination = destinationAddress,
+                                imageUrl = imageUrl,
+                                tip = tipAmount,
+                                rentalId = rentalID,
+                                returnId = returnID
+                            )
 
-                        val delivery = Delivery(
-                            key = key,
-                            name = itemName,
-                            source = sourceAddress,
-                            destination = destinationAddress,
-                            imageUrl = imageUrl,
-                            tip = tipAmount,
-                            rentalId = rentalID,
-                            returnId = returnID
-                        )
-
-                        newList.add(delivery)
+                            newList.add(delivery)
+                        }
                     }
                     trySend(newList).isSuccess
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // Failed to read value
                 Log.w("DatabaseError", error.toException())
             }
         })
@@ -63,10 +61,8 @@ class ItemFetcher() {
         itemReference.removeValue().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 Log.d("Delete Item", "Item successfully deleted.")
-                // Handle successful deletion, e.g., update UI or notify user
             } else {
                 Log.d("Delete Item", "Failed to delete item.")
-                // Handle failure, e.g., show error message
             }
         }
     }
@@ -76,11 +72,9 @@ class ItemFetcher() {
         val itemReference = databaseReference.child(key)
         itemReference.child("accepted").setValue(true).addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                Log.d("Delete Item", "Item successfully deleted.")
-                // Handle successful deletion, e.g., update UI or notify user
+                Log.d("Update Item", "Item successfully updated.")
             } else {
-                Log.d("Delete Item", "Failed to delete item.")
-                // Handle failure, e.g., show error message
+                Log.d("Update Item", "Failed to update item.")
             }
         }
     }

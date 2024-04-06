@@ -25,6 +25,7 @@ class WaitingActivity : AppCompatActivity() {
         sharedpreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
 
         val waitingText = findViewById<TextView>(R.id.waitingText)
+        val availableText = findViewById<TextView>(R.id.availableText)
         val logoutBtn = findViewById<ImageButton>(R.id.logoutButton)
         logoutBtn.setOnClickListener {
             // remove username from shared preferences, send to login screen
@@ -47,10 +48,14 @@ class WaitingActivity : AppCompatActivity() {
                 deliveries.clear()
                 deliveries.addAll(it)
                 itemAdapter.notifyDataSetChanged()
-                Log.i("RV List", deliveries.toString())
                 if (deliveries.size > 0) {
                     waitingText.visibility = TextView.INVISIBLE
+                    availableText.visibility = TextView.VISIBLE
                     recycler.visibility = RecyclerView.VISIBLE
+                } else {
+                    waitingText.visibility = TextView.VISIBLE
+                    availableText.visibility = TextView.INVISIBLE
+                    recycler.visibility = RecyclerView.INVISIBLE
                 }
             }
         }
