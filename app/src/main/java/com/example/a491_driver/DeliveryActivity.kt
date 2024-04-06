@@ -66,8 +66,12 @@ class DeliveryActivity: AppCompatActivity() {
             // - api stuff is simply calling ItemFetcher.removeDelivery(delivery.key)
             delivery.key?.let { it1 -> ItemFetcher().removeDelivery(it1) }
 
-            // then using retrofit to update delivered/returned in the database based on whether the
-            // returnId in delivery object is null or not
+            // then using retrofit to update delivered/returned in the database based on type
+            if (delivery.type == "rental") {
+                // TODO: Update DB rentals "delivered" flag to true using delivery.rentalId
+            } else if (delivery.type == "return") {
+                // TODO: Update DB rentals AND returns "returned" flag to true based on delivery.rentalId
+            }
 
             val intent = Intent(this, WaitingActivity::class.java)
             startActivity(intent)

@@ -27,7 +27,7 @@ class ItemFetcher() {
                             val sourceAddress = item.child("source_address").getValue(String::class.java)
                             val tipAmount = item.child("tip_amount").getValue(String::class.java)
                             val rentalID = item.child("rental_id").getValue(Int::class.java).toString()
-                            val returnID = item.child("return_id").getValue(Int::class.java).toString()
+                            val deliveryType = item.child("type").getValue(String::class.java)
                             val delivery = Delivery(
                                 key = key,
                                 name = itemName,
@@ -36,7 +36,7 @@ class ItemFetcher() {
                                 imageUrl = imageUrl,
                                 tip = tipAmount,
                                 rentalId = rentalID,
-                                returnId = returnID
+                                type = deliveryType
                             )
 
                             newList.add(delivery)

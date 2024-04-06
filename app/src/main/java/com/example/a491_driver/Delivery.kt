@@ -26,7 +26,7 @@ class Delivery (
     @SerializedName("rentalId")
     val rentalId: String?,
 
-    @SerializedName("returnId")
-    val returnId: String?
+    @SerializedName("type")
+    val type: String?
 ) : java.io.Serializable {
 }
