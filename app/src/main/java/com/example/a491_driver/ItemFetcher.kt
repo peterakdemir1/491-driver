@@ -5,64 +5,45 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
-class ItemFetcher(passedItems: MutableList<Delivery>, passedAdapter: ItemAdapter) {
-    val items = passedItems
-    val itemAdapter = passedAdapter
-
-    fun getCurrentDeliveries() {
+class ItemFetcher() {
+    fun getCurrentDeliveries(): Flow<List<Delivery>> = callbackFlow {
         val databaseReference = FirebaseDatabase.getInstance().getReference("messages")
-        databaseReference.addValueEventListener(object : ValueEventListener {
+        val listener = databaseReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
-                    // Iterate through each child
                     val list = snapshot.children.toList()
+                    val newList = mutableListOf<Delivery>()
 
-                    val newItem = list[list.size - 1]
-                    Log.i("RT Firebase Contents", newItem.toString())
+                    for (item in list) {
+                        val key = item.key.toString()
+                        val destinationAddress = item.child("destination_address").getValue(String::class.java)
+                        val imageUrl = item.child("image_url").getValue(String::class.java)
+                        val itemName = item.child("item_name").getValue(String::class.java)
+                        val sourceAddress = item.child("source_address").getValue(String::class.java)
+                        val tipAmount = item.child("tip_amount").getValue(String::class.java)
+                        val rentalID = item.child("rental_id").getValue(Int::class.java).toString()
+                        val returnID = item.child("return_id").getValue(Int::class.java).toString()
 
-                    val key = newItem.key.toString()
-                    val destinationAddress = newItem.child("destination_address").getValue(String::class.java)
-                    val imageUrl = newItem.child("image_url").getValue(String::class.java)
-                    val itemName = newItem.child("item_name").getValue(String::class.java)
-                    val sourceAddress = newItem.child("source_address").getValue(String::class.java)
-                    val tipAmount = newItem.child("tip_amount").getValue(String::class.java)
-                    val rentalID = newItem.child("rental_id").getValue(Int::class.java).toString()
-                    val returnID = newItem.child("return_id").getValue(Int::class.java).toString()
+                        val delivery = Delivery(
+                            key = key,
+                            name = itemName,
+                            source = sourceAddress,
+                            destination = destinationAddress,
+                            imageUrl = imageUrl,
+                            tip = tipAmount,
+                            rentalId = rentalID,
+                            returnId = returnID
+                        )
 
-                    Log.i("New RT Firebase Item Key", key)
-                    Log.i(
-                        "New RT Firebase Item",
-                        "item: ${itemName}\nsource: ${sourceAddress}\ndestination: ${destinationAddress}\nimage url: ${imageUrl}\ntip: ${tipAmount}"
-                    )
-
-                    val delivery = Delivery(
-                        key = key,
-                        name = itemName,
-                        source = sourceAddress,
-                        destination = destinationAddress,
-                        imageUrl = imageUrl,
-                        tip = tipAmount,
-                        rentalId = rentalID,
-                        returnId = returnID
-                    )
-
-                    items.add(delivery)
-                    itemAdapter.notifyDataSetChanged()
-
-                    val itemReference = databaseReference.child(key)
-//                    delButton.setOnClickListener {
-//                        itemReference.removeValue().addOnCompleteListener { task ->
-//                            if (task.isSuccessful) {
-//                                Log.d("Delete Item", "Item successfully deleted.")
-//                                // Handle successful deletion, e.g., update UI or notify user
-//                            } else {
-//                                Log.d("Delete Item", "Failed to delete item.")
-//                                // Handle failure, e.g., show error message
-//                            }
-//                        }
-//                    }
-
+                        newList.add(delivery)
+                    }
+                    trySend(newList).isSuccess
                 }
             }
 
@@ -70,8 +51,25 @@ class ItemFetcher(passedItems: MutableList<Delivery>, passedAdapter: ItemAdapter
                 // Failed to read value
                 Log.w("DatabaseError", error.toException())
             }
-//        })
-//    }
         })
+        awaitClose {
+            databaseReference.removeEventListener(listener)
+        }
+    }
+
+    suspend fun removeDelivery(key: String) {
+        val databaseReference = FirebaseDatabase.getInstance().getReference("messages")
+        val itemReference = databaseReference.child(key)
+        itemReference.removeValue().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Log.d("Delete Item", "Item successfully deleted.")
+                // Handle successful deletion, e.g., update UI or notify user
+            } else {
+                Log.d("Delete Item", "Failed to delete item.")
+                // Handle failure, e.g., show error message
+            }
+        }
+
+
     }
 }

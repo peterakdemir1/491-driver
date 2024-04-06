@@ -10,8 +10,10 @@ import android.widget.GridLayout
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.launch
 
 class WaitingActivity : AppCompatActivity() {
     lateinit var sharedpreferences: SharedPreferences
@@ -39,13 +41,18 @@ class WaitingActivity : AppCompatActivity() {
         val itemAdapter = ItemAdapter(deliveries, this)
         recycler.adapter = itemAdapter
 
-        val fetcher = ItemFetcher(deliveries, itemAdapter)
-        fetcher.getCurrentDeliveries()
-
-        if (deliveries.size > 0){
-            waitingText.visibility = TextView.INVISIBLE
-            recycler.visibility = RecyclerView.VISIBLE
-            Log.i("RV List", deliveries.toString())
+        val fetcher = ItemFetcher()
+        lifecycleScope.launch {
+            fetcher.getCurrentDeliveries().collect {
+                deliveries.clear()
+                deliveries.addAll(it)
+                itemAdapter.notifyDataSetChanged()
+                Log.i("RV List", deliveries.toString())
+                if (deliveries.size > 0) {
+                    waitingText.visibility = TextView.INVISIBLE
+                    recycler.visibility = RecyclerView.VISIBLE
+                }
+            }
         }
 
         // remove once api trigger when a delivery is ready is implemented
