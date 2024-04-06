@@ -51,54 +51,43 @@ class LoginActivity : AppCompatActivity() {
     // FOR WHEN API IS IMPLEMENTED
 
     // Logs in if username/password is valid
-//    suspend fun checkAccount(username: String, password: String) {
-//        try {
-//            // send input data to checkPassword API
-//            val apiService = RetrofitClient.instance.create(ApiService::class.java)
-//            val credentials = Account(
-//                "",
-//                "",
-//                username,
-//                password,
-//                "",
-//                "",
-//                ""
-//            )
-//
-//            // If valid, returns message and user id, throws error otherwise
-//            val returnMessage: ReturnMessage = apiService.checkPassword(credentials)
-//
-//            if (returnMessage.message == "Password is correct") {
-//                sharedpreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
-//                val editor = sharedpreferences.edit()
-//                editor.clear()
-//                editor.putString("username", username)
-//                editor.putInt("user id", returnMessage.user_id)
-//                editor.putString("user location", returnMessage.location)
-//                editor.apply()
-//                startActivity(Intent(this, MainActivity::class.java))
-//            } else {
-//                Toast.makeText(this, "Invalid login", Toast.LENGTH_SHORT).show()
-//            }
-//        } catch (e: Exception) {
-//            Log.e("RegisterActivity", "Error: ${e.message}", e)
-//            Toast.makeText(this, "Invalid login", Toast.LENGTH_SHORT).show()
-//        }
-//    }
+    suspend fun checkAccount(username: String, password: String) {
+        try {
+            // send input data to checkPassword API
+            val apiService = RetrofitClient.instance.create(APIService::class.java)
+            val credentials = DriverCredentials(username, password)
+
+            // If valid, returns message and user id, throws error otherwise
+            val returnMessage: ReturnMessage = apiService.checkDriverCredentials(credentials)
+
+            if (returnMessage.message == "Credentials are correct") {
+                sharedpreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
+                val editor = sharedpreferences.edit()
+                editor.clear()
+                editor.putString(getString(R.string.username_key), username)
+                editor.putInt(getString(R.string.driver_id_key), returnMessage.driver_id)
+                editor.apply()
+                startActivity(Intent(this, MainActivity::class.java))
+            } else {
+                Toast.makeText(this, "Invalid login", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: Exception) {
+            Log.e("LoginActivity", "Error: ${e.message}", e)
+            Toast.makeText(this, "Invalid login", Toast.LENGTH_SHORT).show()
+        }
+    }
 
 }
 
-class Account (
-    val first_name: String,
-    val last_name: String,
-    val username: String,
-    val password: String,
+class DriverCredentials (val username: String, val password: String)
+
+class ReturnMessage(
+    val message: String,
+    val driver_id: Int,
     val phone_number: String,
-    val location: String,
-    val payment_method: String
-) {
-}
-
-class ReturnMessage(val message: String, val user_id: Int, val location: String){
+    val license_id: String,
+    val verified: Boolean,
+    val direct_deposit: Boolean
+){
 }
 

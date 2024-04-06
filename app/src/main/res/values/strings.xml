@@ -13,4 +13,6 @@
     <string name="location_two_place">Location Two: Place</string>
     <string name="location_2_place">Location 2: Place</string>
     <string name="license_id">License ID</string>
+    <string name="username_key">username</string>
+    <string name="driver_id_key">driver_id</string>
 </resources>
