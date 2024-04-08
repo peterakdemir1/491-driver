@@ -28,22 +28,24 @@ class DeliveryActivity: AppCompatActivity() {
         itemLocationTwo = findViewById(R.id.locationText)
 
         // For when API is enabled
-//        val item = intent.getSerializableExtra(ITEM_EXTRA) as Item
-//
-//        itemTitle.text = item.itemTitle
-//        val locationTwo = "Location: " + item.pickupLocation
-//        itemLocationTwo.text = locationOne
+        val delivery = intent.getSerializableExtra(DELIVERY_EXTRA) as Delivery
+
+        itemTitle.text = delivery.name
+        val locationTwo = "Location: " + delivery.destination
+        itemLocationTwo.text = locationTwo
 //
         Glide.with(this)
-//            .load(item.itemImageUrl)
-            .load(ContextCompat.getDrawable(this, R.drawable.drill_test))
+            .load(delivery.imageUrl)
+//            .load(ContextCompat.getDrawable(this, R.drawable.drill_test))
             .into(itemImage)
+
 
 
         val googleMapsBtn = findViewById<Button>(R.id.directionsButton)
 
         googleMapsBtn.setOnClickListener {
-            val location = "154 Summit Street, Newark, NJ 07102" // replace this with item.pickupLocation
+//            val location = "154 Summit Street, Newark, NJ 07102" // replace this with item.pickupLocation
+            val location = delivery.destination
             val intent = Intent(
                 Intent.ACTION_VIEW,
                 Uri.parse("google.navigation:q=$location")
@@ -60,6 +62,16 @@ class DeliveryActivity: AppCompatActivity() {
             val editor = sharedpreferences.edit()
             editor.remove("delivering")
             editor.apply()
+
+            // - api stuff is simply calling ItemFetcher.removeDelivery(delivery.key)
+            delivery.key?.let { it1 -> ItemFetcher().removeDelivery(it1) }
+
+            // then using retrofit to update delivered/returned in the database based on type
+            if (delivery.type == "rental") {
+                // TODO: Update DB rentals "delivered" flag to true using delivery.rentalId
+            } else if (delivery.type == "return") {
+                // TODO: Update DB rentals AND returns "returned" flag to true based on delivery.rentalId
+            }
 
             val intent = Intent(this, WaitingActivity::class.java)
             startActivity(intent)

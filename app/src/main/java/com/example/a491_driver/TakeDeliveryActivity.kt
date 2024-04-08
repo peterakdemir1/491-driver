@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 
-const val ITEM_EXTRA = "ITEM_EXTRA"
+//const val ITEM_EXTRA = "ITEM_EXTRA"
 class TakeDeliveryActivity : AppCompatActivity() {
     private lateinit var itemImage: ImageView
     private lateinit var itemTitle: TextView
@@ -32,20 +32,20 @@ class TakeDeliveryActivity : AppCompatActivity() {
         itemPayout = findViewById(R.id.payoutText)
 
         // For when API is enabled
-//        val item = intent.getSerializableExtra(ITEM_EXTRA) as Item
+        val delivery = intent.getSerializableExtra(DELIVERY_EXTRA) as Delivery
 //
-//        itemTitle.text = item.itemTitle
-//        val locationOne = "Location 1: " + item.pickupLocation
-//        itemLocationOne.text = locationOne
-//        val locationTwo = "Location 2: " + item.deliverLocation
-//        itemLocationTwo.text = locationTwo
-//        val payout = "Payout: $" + item.tip_amount_for_driver
-//        itemPayout.text = payout
+        itemTitle.text = delivery.name
+        val locationOne = "Location 1: " + delivery.source
+        itemLocationOne.text = locationOne
+        val locationTwo = "Location 2: " + delivery.destination
+        itemLocationTwo.text = locationTwo
+        val payout = "Payout: $" + delivery.tip
+        itemPayout.text = payout
 
 
         Glide.with(this)
-//            .load(item.itemImageUrl)
-            .load(ContextCompat.getDrawable(this, R.drawable.drill_test))
+            .load(delivery.imageUrl)
+//            .load(ContextCompat.getDrawable(this, R.drawable.drill_test))
             .into(itemImage)
 
 
@@ -55,13 +55,15 @@ class TakeDeliveryActivity : AppCompatActivity() {
         acceptBtn.setOnClickListener {
 
             // Insert API Stuff to say item is accepted
+            // updating the item's "accepted" value to true
+            delivery.key?.let { it1 -> ItemFetcher().updateAccepted(it1) }
 
             sharedpreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
             val editor = sharedpreferences.edit()
             editor.putString("picking up", "item")
             editor.apply()
             val intent = Intent(this, PickUpActivity::class.java)
-//            intent.putExtra(ITEM_EXTRA, item)
+            intent.putExtra(DELIVERY_EXTRA, delivery)
             startActivity(intent)
             finish()
         }
