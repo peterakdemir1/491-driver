@@ -3,6 +3,7 @@ package com.example.a491_driver
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+/*
 @Serializable
 class Delivery (
     @SerializedName("key")
@@ -27,6 +28,21 @@ class Delivery (
     val rentalId: String?,
 
     @SerializedName("type")
+    @SerializedName("type")
+    val type: String?
+) : java.io.Serializable {
+}*/
+
+class Delivery (
+    val key: String?,
+    val listing_id: Int?,
+    val rental_id: Int?,
+    val return_id: Int?,
+    val pickup_location: String?,
+    val deliver_location: String?,
+    val delivery_title: String?,
+    val payment: String?,
+    val img_url: String?,
     val type: String?
 ) : java.io.Serializable {
 }

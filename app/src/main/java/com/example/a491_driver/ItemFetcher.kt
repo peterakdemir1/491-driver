@@ -30,13 +30,15 @@ class ItemFetcher() {
                             val deliveryType = item.child("type").getValue(String::class.java)
                             val delivery = Delivery(
                                 key = key,
-                                name = itemName,
-                                source = sourceAddress,
-                                destination = destinationAddress,
-                                imageUrl = imageUrl,
-                                tip = tipAmount,
-                                rentalId = rentalID,
-                                type = deliveryType
+                                delivery_title = itemName,
+                                pickup_location = sourceAddress,
+                                deliver_location = destinationAddress,
+                                img_url = imageUrl,
+                                payment = tipAmount,
+                                rental_id = rentalID.toInt(),
+                                type = deliveryType,
+                                return_id = rentalID.toInt(),
+                                listing_id = 27  // this needs to be changed later
                             )
 
                             newList.add(delivery)

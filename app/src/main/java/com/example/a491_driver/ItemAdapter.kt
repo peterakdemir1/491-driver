@@ -31,12 +31,12 @@ class ItemAdapter(private val deliveries: List<Delivery>, private val context: C
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val delivery = deliveries[position]
-        holder.itemTitle.text = delivery.name
-        holder.itemSource.text = "Source Address: " + delivery.source
-        holder.itemDestination.text = "Destination Address: " + delivery.destination
-        holder.itemTip.text = "Tip: $" + delivery.tip
+        holder.itemTitle.text = delivery.delivery_title
+        holder.itemSource.text = "Source Address: " + delivery.pickup_location
+        holder.itemDestination.text = "Destination Address: " + delivery.deliver_location
+        holder.itemTip.text = "Tip: $" + delivery.payment
         Glide.with(holder.itemImage)
-            .load(delivery.imageUrl)
+            .load(delivery.img_url)
 //            .load(ContextCompat.getDrawable(context, R.drawable.shekhmus))
             .centerInside()
 //            .placeholder(R.drawable.loading) // Loading Image
