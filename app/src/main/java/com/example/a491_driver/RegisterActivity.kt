@@ -22,53 +22,57 @@ class RegisterActivity : AppCompatActivity() {
         val lNameInput = findViewById<EditText>(R.id.lastNameInput)
         val usernameInput = findViewById<EditText>(R.id.usernameInput)
         //val emailInput = findViewById<EditText>(R.id.emailInput)
-        val locationInput = findViewById<EditText>(R.id.locationInput)
+        val licenseInput = findViewById<EditText>(R.id.licenseInput)
         val passwordInput = findViewById<EditText>(R.id.passwordInput)
         val phoneInput = findViewById<EditText>(R.id.phoneInput)
-        val paymentInput = findViewById<EditText>(R.id.paymentInput)
         val button = findViewById<Button>(R.id.registerButton)
 
         button.setOnClickListener {
-            val newAccount = Account(
+            val newDriver = Driver(
                 fNameInput.text.toString(),
                 lNameInput.text.toString(),
                 usernameInput.text.toString(),
                 passwordInput.text.toString(),
                 phoneInput.text.toString(),
-                locationInput.text.toString(),
-                paymentInput.text.toString()
+                licenseInput.text.toString()
             )
 
+            GlobalScope.launch(Dispatchers.Main) {
+                postDriverData(newDriver)
+            }
             startActivity(Intent(this, LoginActivity::class.java))
-            // FOR WHEN API IS IMPLEMENTED
-//            GlobalScope.launch(Dispatchers.Main) {
-//                postUserData(newAccount)
-//            }
+
 
         }
 
     }
 
-    // FOR WHEN API IS IMPLEMENTED
-//    suspend fun postUserData (user: Account) {
-//        try {
-//            val apiService = RetrofitClient.instance.create(ApiService::class.java)
-//            apiService.postUser(user)
-//
-//            // authenticate user to receive user id
-//            val returnMessage: ReturnMessage = apiService.checkPassword(user)
-//
-//            // store username in sharedpreferences and login
-//            sharedpreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
-//            val editor = sharedpreferences.edit()
-//            editor.clear()
-//            editor.putString("username", user.username)
-//            editor.putInt("user id", returnMessage.user_id)
-//            editor.putString("user location", user.location)
-//            editor.apply()
-//            startActivity(Intent(this, MainActivity::class.java))
-//        } catch (e: Exception) {
-//            Log.e("RegisterActivity", "Error: ${e.message}", e)
-//        }
-//    }
+    suspend fun postDriverData (driver: Driver) {
+        try {
+            val apiService = RetrofitClient.instance.create(APIService::class.java)
+            val returnDriver = apiService.createDriver(driver)
+
+
+            // store username in sharedpreferences and login
+            sharedpreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
+            val editor = sharedpreferences.edit()
+            editor.clear()
+            editor.putString(getString(R.string.username_key), driver.username)
+            editor.putInt(getString(R.string.driver_id_key), returnDriver.driver_id)
+            editor.apply()
+            startActivity(Intent(this, MainActivity::class.java))
+        } catch (e: Exception) {
+            Log.e("RegisterActivity", "Error: ${e.message}", e)
+        }
+    }
 }
+
+class ReturnDriver (
+    val driver_id: Int,
+    val first_name: String,
+    val last_name: String,
+    val username: String,
+    val password: String,
+    val phone_number: String,
+    val license_id: String
+)

@@ -4,15 +4,20 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
-//const val ITEM_EXTRA = "ITEM_EXTRA"
+const val DELIVERY_EXTRA = "DELIVERY_EXTRA"
 class TakeDeliveryActivity : AppCompatActivity() {
     private lateinit var itemImage: ImageView
     private lateinit var itemTitle: TextView
@@ -31,21 +36,21 @@ class TakeDeliveryActivity : AppCompatActivity() {
         itemLocationTwo = findViewById(R.id.locationTwoText)
         itemPayout = findViewById(R.id.payoutText)
 
-        // For when API is enabled
+
         val delivery = intent.getSerializableExtra(DELIVERY_EXTRA) as Delivery
-//
-        itemTitle.text = delivery.name
-        val locationOne = "Location 1: " + delivery.source
+
+
+        itemTitle.text = delivery.delivery_title
+        val locationOne = "Location 1: " + delivery.pickup_location
         itemLocationOne.text = locationOne
-        val locationTwo = "Location 2: " + delivery.destination
+        val locationTwo = "Location 2: " + delivery.deliver_location
         itemLocationTwo.text = locationTwo
-        val payout = "Payout: $" + delivery.tip
+        val payout = "Payout: $" + delivery.payment
         itemPayout.text = payout
 
 
         Glide.with(this)
             .load(delivery.imageUrl)
-//            .load(ContextCompat.getDrawable(this, R.drawable.drill_test))
             .into(itemImage)
 
 
@@ -53,12 +58,38 @@ class TakeDeliveryActivity : AppCompatActivity() {
         val denyBtn = findViewById<Button>(R.id.denyButton)
 
         acceptBtn.setOnClickListener {
-
             // Insert API Stuff to say item is accepted
             // updating the item's "accepted" value to true
             delivery.key?.let { it1 -> ItemFetcher().updateAccepted(it1) }
+            GlobalScope.launch(Dispatchers.Main) {
+                attachDriver(delivery)
+            }
+        }
 
-            sharedpreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
+        denyBtn.setOnClickListener {
+            val intent = Intent(this, WaitingActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
+    }
+
+
+    suspend fun attachDriver(delivery: Delivery){
+        val apiService = RetrofitClient.instance.create(APIService::class.java)
+        sharedpreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
+        try {
+            // attach driver
+            val driver_id = DriverId(sharedpreferences.getInt(getString(R.string.driver_id_key), -1))
+            if (delivery.rental_id != null) {
+                val rental_id = delivery.rental_id
+                apiService.attachDriverToRental(rental_id, driver_id)
+            } else if (delivery.return_id != null) {
+                val return_id = delivery.return_id
+                apiService.attachDriverToReturn(return_id, driver_id)
+            }
+
+            // go to pick up activity
             val editor = sharedpreferences.edit()
             editor.putString("picking up", "item")
             editor.apply()
@@ -66,17 +97,15 @@ class TakeDeliveryActivity : AppCompatActivity() {
             intent.putExtra(DELIVERY_EXTRA, delivery)
             startActivity(intent)
             finish()
-        }
-
-        denyBtn.setOnClickListener {
-
-            // Insert API stuff to say item was denied
-
+        } catch (e: Exception) {
+            Log.e("TakeDeliveryActivity", "Could not attach driver to delivery")
+            Log.e("TakeDeliveryActivity", "Error:  ${e.message}")
+            Toast.makeText(this, "Couldn't Accept", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, WaitingActivity::class.java)
             startActivity(intent)
             finish()
         }
-
-
     }
 }
+
+class DriverId(val driver_id: Int)

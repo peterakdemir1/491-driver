@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 
+const val DELIVERY_EXTRA2 = "ITEM_EXTRA2"
 class PickUpActivity: AppCompatActivity() {
     private lateinit var itemImage: ImageView
     private lateinit var itemTitle: TextView
@@ -29,8 +30,8 @@ class PickUpActivity: AppCompatActivity() {
         // For when API is enabled
         val delivery = intent.getSerializableExtra(DELIVERY_EXTRA) as Delivery
 
-        itemTitle.text = delivery.name
-        val locationOne = "Location: " + delivery.source
+        itemTitle.text = delivery.delivery_title
+        val locationOne = "Location: " + delivery.pickup_location
         itemLocationOne.text = locationOne
 //
         Glide.with(this)
@@ -42,8 +43,7 @@ class PickUpActivity: AppCompatActivity() {
         val googleMapsBtn = findViewById<Button>(R.id.directionsButton)
 
         googleMapsBtn.setOnClickListener {
-//            val location = "154 Summit Street, Newark, NJ 07102" // replace this with item.pickupLocation
-            val location = delivery.source
+            val location = delivery.pickup_location
             val intent = Intent(
                 Intent.ACTION_VIEW,
                 Uri.parse("google.navigation:q=$location")
@@ -63,7 +63,7 @@ class PickUpActivity: AppCompatActivity() {
             editor.apply()
 
             val intent = Intent(this, DeliveryActivity::class.java)
-            intent.putExtra(DELIVERY_EXTRA, delivery)
+            intent.putExtra(DELIVERY_EXTRA2, delivery)
             startActivity(intent)
             finish()
         }

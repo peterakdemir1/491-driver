@@ -5,12 +5,16 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 class DeliveryActivity: AppCompatActivity() {
@@ -27,13 +31,13 @@ class DeliveryActivity: AppCompatActivity() {
         itemTitle = findViewById(R.id.itemText)
         itemLocationTwo = findViewById(R.id.locationText)
 
-        // For when API is enabled
-        val delivery = intent.getSerializableExtra(DELIVERY_EXTRA) as Delivery
+        val delivery = intent.getSerializableExtra(DELIVERY_EXTRA2) as Delivery
 
-        itemTitle.text = delivery.name
-        val locationTwo = "Location: " + delivery.destination
+        itemTitle.text = delivery.delivery_title
+        val locationTwo = "Location: " + delivery.pickup_location
         itemLocationTwo.text = locationTwo
-//
+
+
         Glide.with(this)
             .load(delivery.imageUrl)
 //            .load(ContextCompat.getDrawable(this, R.drawable.drill_test))
@@ -44,8 +48,7 @@ class DeliveryActivity: AppCompatActivity() {
         val googleMapsBtn = findViewById<Button>(R.id.directionsButton)
 
         googleMapsBtn.setOnClickListener {
-//            val location = "154 Summit Street, Newark, NJ 07102" // replace this with item.pickupLocation
-            val location = delivery.destination
+            val location = delivery.deliver_location // replace this with item.pickupLocation
             val intent = Intent(
                 Intent.ACTION_VIEW,
                 Uri.parse("google.navigation:q=$location")
@@ -55,27 +58,9 @@ class DeliveryActivity: AppCompatActivity() {
 
         val confirmDeliveryBtn = findViewById<Button>(R.id.confirmDeliveryButton)
         confirmDeliveryBtn.setOnClickListener {
-
-            // Insert API stuff to confirm delivery
-
-            sharedpreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
-            val editor = sharedpreferences.edit()
-            editor.remove("delivering")
-            editor.apply()
-
-            // - api stuff is simply calling ItemFetcher.removeDelivery(delivery.key)
-            delivery.key?.let { it1 -> ItemFetcher().removeDelivery(it1) }
-
-            // then using retrofit to update delivered/returned in the database based on type
-            if (delivery.type == "rental") {
-                // TODO: Update DB rentals "delivered" flag to true using delivery.rentalId
-            } else if (delivery.type == "return") {
-                // TODO: Update DB rentals AND returns "returned" flag to true based on delivery.rentalId
+            GlobalScope.launch(Dispatchers.Main) {
+                markDelivered(delivery)
             }
-
-            val intent = Intent(this, WaitingActivity::class.java)
-            startActivity(intent)
-            finish()
         }
 
 
@@ -84,4 +69,36 @@ class DeliveryActivity: AppCompatActivity() {
         super.onBackPressed()
         finishAffinity() // Finish all activities in the task associated with this activity
     }
+
+    suspend fun markDelivered(delivery: Delivery){
+        val apiService = RetrofitClient.instance.create(APIService::class.java)
+
+        try {
+            if (delivery.rental_id != null) {
+                apiService.markRentalDelivered(delivery.rental_id)
+            } else if (delivery.return_id != null) {
+                apiService.markReturnDelivered(delivery.return_id)
+            }
+            try {
+                apiService.makeListingAvailable(delivery.listing_id.toString())
+
+                sharedpreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
+                val editor = sharedpreferences.edit()
+                editor.remove("delivering")
+                editor.apply()
+
+                val intent = Intent(this, WaitingActivity::class.java)
+                startActivity(intent)
+                finish()
+            } catch (e: Exception) {
+                Log.e("DeliveryActivity", "Could not mark item as available")
+                Log.e("DeliveryActivity", "Error: ${e.message}")
+            }
+
+        } catch (e: Exception) {
+            Log.e("DeliveryActivity", "Could not mark item as delivered")
+            Log.e("DeliveryActivity", "Error: ${e.message}")
+        }
+    }
+
 }

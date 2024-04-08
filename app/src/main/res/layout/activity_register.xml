@@ -59,11 +59,11 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/location"
+                android:text="@string/license_id"
                 android:textStyle="bold" />
 
             <EditText
-                android:id="@+id/locationInput"
+                android:id="@+id/licenseInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="50dp"/>
@@ -91,17 +91,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="50dp"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/payment_method"
-                android:textStyle="bold" />
-
-            <EditText
-                android:id="@+id/paymentInput"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
 
             <Button
                 android:layout_width="match_parent"
