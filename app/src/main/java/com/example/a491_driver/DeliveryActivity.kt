@@ -37,10 +37,12 @@ class DeliveryActivity: AppCompatActivity() {
         val locationTwo = "Location: " + delivery.pickup_location
         itemLocationTwo.text = locationTwo
 
+
         Glide.with(this)
-//            .load(item.itemImageUrl)
-            .load(ContextCompat.getDrawable(this, R.drawable.drill_test))
+            .load(delivery.imageUrl)
+//            .load(ContextCompat.getDrawable(this, R.drawable.drill_test))
             .into(itemImage)
+
 
 
         val googleMapsBtn = findViewById<Button>(R.id.directionsButton)

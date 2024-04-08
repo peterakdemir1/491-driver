@@ -37,18 +37,7 @@ class TakeDeliveryActivity : AppCompatActivity() {
         itemPayout = findViewById(R.id.payoutText)
 
 
-//        val delivery = intent.getSerializableExtra(DELIVERY_EXTRA) as Delivery
-// integrate getting actual delivery info after we merge with peter
-        val delivery = Delivery(
-            25,
-            59,
-            null,
-            "101 Central Ave, Newark",
-            "200 Warren St, Newark",
-            "Big drill",
-            "$100",
-            "google.com"
-        )
+        val delivery = intent.getSerializableExtra(DELIVERY_EXTRA) as Delivery
 
 
         itemTitle.text = delivery.delivery_title
@@ -61,8 +50,7 @@ class TakeDeliveryActivity : AppCompatActivity() {
 
 
         Glide.with(this)
-//            .load(delivery.itemImageUrl)
-            .load(ContextCompat.getDrawable(this, R.drawable.drill_test))
+            .load(delivery.imageUrl)
             .into(itemImage)
 
 
@@ -70,12 +58,12 @@ class TakeDeliveryActivity : AppCompatActivity() {
         val denyBtn = findViewById<Button>(R.id.denyButton)
 
         acceptBtn.setOnClickListener {
-
+            // Insert API Stuff to say item is accepted
+            // updating the item's "accepted" value to true
+            delivery.key?.let { it1 -> ItemFetcher().updateAccepted(it1) }
             GlobalScope.launch(Dispatchers.Main) {
                 attachDriver(delivery)
             }
-
-
         }
 
         denyBtn.setOnClickListener {
@@ -85,6 +73,7 @@ class TakeDeliveryActivity : AppCompatActivity() {
         }
 
     }
+
 
     suspend fun attachDriver(delivery: Delivery){
         val apiService = RetrofitClient.instance.create(APIService::class.java)

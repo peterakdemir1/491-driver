@@ -35,8 +35,8 @@ class PickUpActivity: AppCompatActivity() {
         itemLocationOne.text = locationOne
 //
         Glide.with(this)
-//            .load(item.itemImageUrl)
-            .load(ContextCompat.getDrawable(this, R.drawable.drill_test))
+            .load(delivery.imageUrl)
+//            .load(ContextCompat.getDrawable(this, R.drawable.drill_test))
             .into(itemImage)
 
 
