@@ -39,7 +39,7 @@ class DeliveryActivity: AppCompatActivity() {
 
 
         Glide.with(this)
-            .load(delivery.imageUrl)
+            .load(delivery.img_url)
 //            .load(ContextCompat.getDrawable(this, R.drawable.drill_test))
             .into(itemImage)
 

@@ -17,7 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-const val DELIVERY_EXTRA = "DELIVERY_EXTRA"
+const val DELIVERY_EXTRA1 = "DELIVERY_EXTRA1"
 class TakeDeliveryActivity : AppCompatActivity() {
     private lateinit var itemImage: ImageView
     private lateinit var itemTitle: TextView
@@ -50,7 +50,7 @@ class TakeDeliveryActivity : AppCompatActivity() {
 
 
         Glide.with(this)
-            .load(delivery.imageUrl)
+            .load(delivery.img_url)
             .into(itemImage)
 
 
@@ -94,7 +94,7 @@ class TakeDeliveryActivity : AppCompatActivity() {
             editor.putString("picking up", "item")
             editor.apply()
             val intent = Intent(this, PickUpActivity::class.java)
-            intent.putExtra(DELIVERY_EXTRA, delivery)
+            intent.putExtra(DELIVERY_EXTRA1, delivery)
             startActivity(intent)
             finish()
         } catch (e: Exception) {

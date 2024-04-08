@@ -28,14 +28,14 @@ class PickUpActivity: AppCompatActivity() {
         itemLocationOne = findViewById(R.id.locationText)
 
         // For when API is enabled
-        val delivery = intent.getSerializableExtra(DELIVERY_EXTRA) as Delivery
+        val delivery = intent.getSerializableExtra(DELIVERY_EXTRA1) as Delivery
 
         itemTitle.text = delivery.delivery_title
         val locationOne = "Location: " + delivery.pickup_location
         itemLocationOne.text = locationOne
 //
         Glide.with(this)
-            .load(delivery.imageUrl)
+            .load(delivery.img_url)
 //            .load(ContextCompat.getDrawable(this, R.drawable.drill_test))
             .into(itemImage)
 
