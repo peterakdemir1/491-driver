@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
 class ItemFetcher() {
+    private lateinit var delivery: Delivery
     fun getCurrentDeliveries(): Flow<List<Delivery>> = callbackFlow {
         val databaseReference = FirebaseDatabase.getInstance().getReference("messages")
         val listener = databaseReference.addValueEventListener(object : ValueEventListener {
@@ -28,18 +29,36 @@ class ItemFetcher() {
                             val tipAmount = item.child("tip_amount").getValue(String::class.java)
                             val rentalID = item.child("rental_id").getValue(Int::class.java).toString()
                             val deliveryType = item.child("type").getValue(String::class.java)
-                            val delivery = Delivery(
-                                key = key,
-                                delivery_title = itemName,
-                                pickup_location = sourceAddress,
-                                deliver_location = destinationAddress,
-                                img_url = imageUrl,
-                                payment = tipAmount,
-                                rental_id = rentalID.toInt(),
-                                type = deliveryType,
-                                return_id = rentalID.toInt(),
-                                listing_id = 27  // this needs to be changed later
-                            )
+                            val listingID = item.child("listing_id").getValue(Int::class.java)
+
+
+                            if (deliveryType == "return") {
+                                delivery = Delivery(
+                                    key = key,
+                                    delivery_title = itemName,
+                                    pickup_location = sourceAddress,
+                                    deliver_location = destinationAddress,
+                                    img_url = imageUrl,
+                                    payment = tipAmount,
+                                    rental_id = null,
+                                    type = deliveryType,
+                                    return_id = rentalID.toInt(),
+                                    listing_id = 27 //listingID.toInt()
+                                )
+                            } else {
+                                delivery = Delivery(
+                                    key = key,
+                                    delivery_title = itemName,
+                                    pickup_location = sourceAddress,
+                                    deliver_location = destinationAddress,
+                                    img_url = imageUrl,
+                                    payment = tipAmount,
+                                    rental_id = rentalID.toInt(),
+                                    type = deliveryType,
+                                    return_id = null,
+                                    listing_id = 27 //listingID.toInt()
+                                )
+                            }
 
                             newList.add(delivery)
                         }
