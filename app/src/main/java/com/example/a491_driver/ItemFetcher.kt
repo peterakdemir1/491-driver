@@ -43,7 +43,7 @@ class ItemFetcher() {
                                     rental_id = null,
                                     type = deliveryType,
                                     return_id = rentalID.toInt(),
-                                    listing_id = 27 //listingID.toInt()
+                                    listing_id = listingID
                                 )
                             } else {
                                 delivery = Delivery(
