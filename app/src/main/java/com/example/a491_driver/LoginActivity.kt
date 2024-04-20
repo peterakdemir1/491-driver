@@ -16,12 +16,15 @@ import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var sharedpreferences: SharedPreferences
+    private lateinit var usernameInput: EditText
+    private lateinit var passwordInput: EditText
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        val usernameInput = findViewById<EditText>(R.id.usernameInput)
-        val passwordInput = findViewById<EditText>(R.id.passwordInput)
+        usernameInput = findViewById<EditText>(R.id.usernameInput)
+        passwordInput = findViewById<EditText>(R.id.passwordInput)
 
         val createAccount = findViewById<TextView>(R.id.createAccount)
         createAccount.setOnClickListener {
@@ -35,6 +38,8 @@ class LoginActivity : AppCompatActivity() {
 
             GlobalScope.launch(Dispatchers.Main){
                 checkAccount(username, password)
+                usernameInput.text.clear()
+                passwordInput.text.clear()
             }
         }
     }
@@ -58,6 +63,7 @@ class LoginActivity : AppCompatActivity() {
                 editor.putInt(getString(R.string.driver_id_key), returnMessage.driver_id)
                 editor.apply()
                 startActivity(Intent(this, MainActivity::class.java))
+                finish()
             } else {
                 Toast.makeText(this, "Invalid login", Toast.LENGTH_SHORT).show()
             }

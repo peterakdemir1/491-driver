@@ -23,44 +23,57 @@
 
     <TextView
         android:id="@+id/itemTitle"
-        android:layout_width="wrap_content"
+        android:layout_width="125dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="4dp"
         android:text="shekhmus"
+        android:ellipsize="none"
+        android:layout_weight="1"
+        android:textColor="@color/black"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/itemImage"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteY="5dp" />
 
     <TextView
         android:id="@+id/itemSourceAddress"
-        android:layout_width="wrap_content"
+        android:layout_width="125dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="shekhmus"
+        android:ellipsize="none"
+        android:layout_weight="1"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/itemImage"
         app:layout_constraintTop_toBottomOf="@+id/itemTitle"
         tools:layout_editor_absoluteY="5dp" />
 
     <TextView
         android:id="@+id/itemDestinationAddress"
-        android:layout_width="wrap_content"
+        android:layout_width="125dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="shekhmus"
+        android:ellipsize="none"
+        android:layout_weight="1"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/itemImage"
         app:layout_constraintTop_toBottomOf="@+id/itemSourceAddress"
         tools:layout_editor_absoluteY="5dp" />
 
     <TextView
         android:id="@+id/itemTip"
-        android:layout_width="wrap_content"
+        android:layout_width="125dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="shekhmus"
+        android:ellipsize="none"
+        android:layout_weight="1"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/itemImage"
         app:layout_constraintTop_toBottomOf="@+id/itemDestinationAddress"
         tools:layout_editor_absoluteY="5dp" />

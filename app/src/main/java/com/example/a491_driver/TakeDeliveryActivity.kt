@@ -92,6 +92,15 @@ class TakeDeliveryActivity : AppCompatActivity() {
             // go to pick up activity
             val editor = sharedpreferences.edit()
             editor.putString("picking up", "item")
+            editor.putString("itemTitle", delivery.delivery_title)
+            editor.putString("itemSource", delivery.pickup_location)
+            editor.putString("itemDestination", delivery.deliver_location)
+            editor.putString("itemTip", delivery.payment)
+            editor.putString("itemImage", delivery.img_url)
+            delivery.rental_id?.let { editor.putInt("itemRentalId", it) }
+            delivery.return_id?.let { editor.putInt("itemReturnId", it) }
+            delivery.listing_id?.let { editor.putInt("itemListingId", it) }
+            editor.putString("key", delivery.key)
             editor.apply()
             val intent = Intent(this, PickUpActivity::class.java)
             intent.putExtra(DELIVERY_EXTRA1, delivery)

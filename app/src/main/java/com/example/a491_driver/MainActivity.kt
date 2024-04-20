@@ -19,13 +19,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start_driving)
 
-        val API_KEY = "2K3xFgG1BbcwRzw2gQSuFVPitxuh75dz"
-
-
-//        val mapWebView: WebView = findViewById(R.id.mapWebView)
-//        mapWebView.settings.javaScriptEnabled = true
-//        mapWebView.loadUrl("file:///android_asset/map.html")
-
         // Check if user is logged in, send to login if not
         sharedpreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
 
@@ -39,9 +32,19 @@ class MainActivity : AppCompatActivity() {
         val userId = sharedpreferences.getInt(getString(R.string.driver_id_key), -1)
         val pickUp = sharedpreferences.getString("picking up", null)
         val delivering = sharedpreferences.getString("delivering", null)
+        val itemTitle = sharedpreferences.getString("itemTitle", null)
+        val itemSource = sharedpreferences.getString("itemSource", null)
+        val itemDestination = sharedpreferences.getString("itemDestination", null)
+        val itemTip = sharedpreferences.getString("itemTip", null)
+        val itemImage = sharedpreferences.getString("itemImage", null)
+        val itemRentalId = sharedpreferences.getInt("itemRentalId", -1)
+        val itemReturnId = sharedpreferences.getInt("itemReturnId", -1)
+        val itemListingId = sharedpreferences.getInt("itemListingId", -1)
+        val key = sharedpreferences.getString("key", null)
 
         if (username == null) {
             startActivity(Intent(this, LoginActivity::class.java))
+            finish()
         } else if (pickUp != null) {
             startActivity(Intent(this, PickUpActivity::class.java))
         } else if (delivering != null) {

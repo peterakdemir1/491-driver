@@ -23,19 +23,22 @@ class PickUpActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pickup)
 
+        sharedpreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
+        val editor = sharedpreferences.edit()
+
         itemImage = findViewById(R.id.itemImage)
         itemTitle = findViewById(R.id.itemText)
         itemLocationOne = findViewById(R.id.locationText)
 
         // For when API is enabled
-        val delivery = intent.getSerializableExtra(DELIVERY_EXTRA1) as Delivery
+//        val delivery = intent.getSerializableExtra(DELIVERY_EXTRA1) as Delivery
 
-        itemTitle.text = delivery.delivery_title
-        val locationOne = "Location: " + delivery.pickup_location
+        itemTitle.text = sharedpreferences.getString("itemTitle", null)
+        val locationOne = "Location: " + sharedpreferences.getString("itemSource", null)
         itemLocationOne.text = locationOne
 //
         Glide.with(this)
-            .load(delivery.img_url)
+            .load(sharedpreferences.getString("itemImage", null))
 //            .load(ContextCompat.getDrawable(this, R.drawable.drill_test))
             .into(itemImage)
 
@@ -43,7 +46,7 @@ class PickUpActivity: AppCompatActivity() {
         val googleMapsBtn = findViewById<Button>(R.id.directionsButton)
 
         googleMapsBtn.setOnClickListener {
-            val location = delivery.pickup_location
+            val location = sharedpreferences.getString("itemSource", null)
             val intent = Intent(
                 Intent.ACTION_VIEW,
                 Uri.parse("google.navigation:q=$location")
@@ -56,14 +59,12 @@ class PickUpActivity: AppCompatActivity() {
 
             // Insert API stuff to confirm pickup
 
-            sharedpreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
-            val editor = sharedpreferences.edit()
             editor.remove("picking up")
             editor.putString("delivering", "item")
             editor.apply()
 
             val intent = Intent(this, DeliveryActivity::class.java)
-            intent.putExtra(DELIVERY_EXTRA2, delivery)
+//            intent.putExtra(DELIVERY_EXTRA2, delivery)
             startActivity(intent)
             finish()
         }
