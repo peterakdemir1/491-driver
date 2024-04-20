@@ -27,6 +27,12 @@ class WaitingActivity : AppCompatActivity() {
         val waitingText = findViewById<TextView>(R.id.waitingText)
         val availableText = findViewById<TextView>(R.id.availableText)
         val logoutBtn = findViewById<ImageButton>(R.id.logoutButton)
+        sharedpreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
+        val username = sharedpreferences.getString(getString(R.string.username_key), "defUsername")
+
+        val usernameView = findViewById<TextView>(R.id.username)
+        usernameView.text = username
+
         logoutBtn.setOnClickListener {
             // remove username from shared preferences, send to login screen
             val editor = sharedpreferences.edit()

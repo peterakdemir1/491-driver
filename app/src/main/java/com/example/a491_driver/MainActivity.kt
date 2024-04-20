@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.webkit.WebView
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
 
 const val SHARED_PREFS = "SHARED_PREFS"
@@ -50,6 +51,9 @@ class MainActivity : AppCompatActivity() {
         } else if (delivering != null) {
             startActivity(Intent(this, DeliveryActivity::class.java))
         }
+
+        val usernameView = findViewById<TextView>(R.id.username)
+        usernameView.text = username
 
         val startDrivingBtn = findViewById<Button>(R.id.deliverButton)
         startDrivingBtn.setOnClickListener {
